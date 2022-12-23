@@ -1,0 +1,208 @@
+# ProgramDevelopment.txt
+
+Key:
+#   : New capability
+-   : Modify current capability
+->  : More information from point above
+											|   Completed   |   Date completed
+Boundary Conditions									|		|
+	FormBoundaryConditionInformation.py 						|		|
+		# Utilise basicMeshObject						|		|
+		# Would be neater to wrap a lot of the pre-work for ghost cells		|	Yes	|	5/10/22
+		  into a ghost cell layer copy module. Lots of repeated code when 	|		|
+		  generating copied ghost cells and interfaces then putting them into 	|		|
+		  ghostCellLayer object							|		|
+											|		|
+	- Remove GenerateGhostCells.py method for boundary conditions			|		|
+	GenerateGhostCells.py  								|		|			
+	# SupersonicInflow_BC.py							|	Yes	|	5/10/22
+		-> Should modify this to account for if on east or west boundary 	|		|
+		   of main mesh so that velocity is correctly defined. Still works if	|		|
+		   velocity is set to be negative on east boundary and positive on	|		|
+		   west boundary							|		|
+	# WallNoSlip_BC.py								|	Yes	|	7/10/22
+	# WallWithSlip_BC.py								|	Yes	|	7/10/22
+	# FromStagnation_BC.py								|	Yes	|	7/10/22
+		-> Should modify this to account for if on east or west boundary of 	|		|
+		   main mesh. When flow is determined to be into or out of domain, it 	|		|
+		   assumes boundary is on west boundary.				|		|
+	# FromStagnationWithMassFlowRate_BC.py						|	Yes	|	7/10/22
+		-> Should modify this to account for if on east or west boundary of	|		|
+		   main mesh. When flow is determined to be into or out of domain, it	|		|
+		   assumes boundary is on west boundary.				|		|
+	# SimpleOutFlow_BC.py								|	Yes	|	5/10/22
+	# SimpleExtrapolateOutFlow_BC.py						|		|	
+	# FixedPOutFlow_BC.py								|	Yes	|	7/10/22
+	# FixedPTOutFlow_BC.py								|	Yes	|	7/10/22
+	# TotalFluxAndPressureInlet_BC.py						|		|	
+		-> For test cases that don't specify inlet areas but we know the total 	|		|	
+		   fluxes and inlet pressure. This will only be applied to specific 	|		|	
+		   interface objects since the update of neighbouring cell CQs are	|		|	
+		   independent of the interface areas.					|		|
+Component Models									|		|	
+	InitialiseConicalNozzle.py                					|		|	
+	SinglePhaseConicalNozzleCell.py 						|		|	
+	SinglePhaseStraightPipeCell.py  						|		|	
+	meshObject.py									|		|	
+	InitialiseSinglePhaseStraightPipeMesh.py  					|		|			
+	SinglePhaseInterface.py								|		|			
+Config											|		|	
+											|		|			
+EXTRAS											|		|	
+	joinBlocks.py									|		|
+		# Utilise meshObject							|		|	
+FluidModel										|		|	
+	IdealAir.py  									|		|	
+	IdealGasModel.py  								|		|		
+	IdealHelium.py									|		|			
+Fluxes											|		|	
+	fluidFluxes.py									|		|	
+		# AUSM scheme								|		|		
+		# AUSMD scheme								|		|	
+		# AUSMV scheme								|		|		
+		# AUSMDV scheme								|		|	
+		# HLLC scheme								|		|	
+		# EFMflx scheme								|		|			
+		# LDFSS scheme								|		|	
+		# Hanel scheme								|		|	
+Integrate										|		|	
+	Integrate.py									|		|		
+PostProcessing										|		|			
+	DataFileToStructuredData.py  							|		|			
+	GeneratePlots.py  								|		|	
+	SIUnitsDictionary.py  								|		|		
+	Symbols.py									|		|			
+README.txt										|		|		
+											|		|		
+Reconstruction										|		|		
+	Limiters.py  									|		|			
+	LocateNeighbouringCellIndices.py  						|		|			
+	LocateNeighbouringInterfaceIndices.py  						|		|			
+	Reconstruction.py								|		|		
+Solver											|		|		
+	Solver.py  									|		|		
+	WriteToDataFile.py								|		|			
+
+-------------------------------------------------------------------------------------------------------------------------
+TODO LIST										|   Completed	| Date Completed
+# Test if class inheritance can solve the GasModel compatability issues			|	YES	|	WHILE AGO
+# Profiling scripts									|	YES	|	WHILE AGO
+# Fix nozzle flow model									|	YES	|	WHILE AGO
+# Test cases										|		|	
+	-> nozzle flow									|		|
+	-> Eilmer nozzle test cases are for linearly varying area, not diameter,	|		|
+	   so an alternative nozzle model with lienarly varying area is desirable	|		|	
+	-> pipe with friction								|		|	
+	-> pipe with heat addition							|		|	
+	-> combustion chamber								|		|	
+	-> CD nozzle									|		|			
+	-> Combustion chamber with converging nozzle					|		|
+	-> Combustion chamber with CD nozzle						|		|	
+# Animate simulations									|		|
+	-> Be able to model comparable properties between components that might not 	|		|	
+	   have exactly the same property names						|		|	
+		-> Eg gas pipe "rho" and two phase pipe "rho_g"				|		|		
+	-> Figure out how to make animations in .mp4 format and scale time such that	|		|	
+	   time evolution is consistent with animation fps				|		|	
+# Multi-component plotting								|		|
+	-> Either write selected multiple components to a single output file or read in |	YES	|	WHILE AGO	
+	   multiple component files							|		|		
+		-> Writing multiple components to one file has the risk of unmatched 	|		|			
+		   variables.								|		|	
+# Error catching									|		|	
+	-> Checking if boundary interfaces are actually on the boundary of blocks	|		|
+		-> This might not be necessary for boundary conditions since parallel	|		|
+		   streams might have interfaces which are used for both boundary	|		|
+		   conditions and joining components					|		|			
+	-> Checking if east boundaries are attached to west boundaries and vice-versa	|		|			
+		(Don't want to find that correct interface on one block is not joined 	|		|		
+		to a real boundary on the other block)					|		|			
+	-> Check that when joining blocks (except when adding boundary cells), the	|		|			
+	   chosen interface is not linked to a boundary condition			|		|			
+	-> Update gas property error handling 						|		|		
+	-> Reconstucted state error handling						|		|			
+	-> In general, specific error messages for debugging				|		|
+# IMPLEMENT FUCKING VERSION CONTROL							|		|
+	-> Want to be able to code and run simulations on laptop, but WSL uses a lot	|		|
+	   of RAM.									|		|
+	-> Want to comit from laptop to Git/GitHub and then pull onto Linux desktop	|		|
+	   to code and run on desktop too						|		|
+	-> Then want to be able to comit from linux desktop to Git/GitHub and then	|		|
+	   pull onto laptop								|		|
+	-> For given version, want to pull into correct location and override old 	|		|
+	   version									|		|
+# Implement Eilmer GasState for cells and interface states				|		|
+	-> Mask all cell and interface states as "GasStates", need to work with Rowan	|		|
+	   to figure out how to handle the GasModel issues. GasState needs a GasModel	|		|
+	   to be initialised, but my extra equations of states aren't in the GasModel	|		|
+	   form, but may be able to have fake GasModel objects by mimicking the 	|		|
+	   attributes of the GasModel object						|		|
+		-> GasModel object attributes: 						|		|
+		['Cp', 'Cv', 'Prandtl', 'R', 'dpdrho_const_T', 'enthalpy',	 	|		|	
+		 'enthalpy_isp', 'entropy', 'entropy_isp', 'file_name', 'gamma',	|		|	
+		 'gibbs_free_energy_isp', 'id', 'internal_energy', 'massf2molef',	|		|	
+		 'mol_masses', 'molecular_mass', 'molef2massf', 'n_modes', 'n_species',	| 		|
+		 'species_names', 'type_str', 'update_sound_speed', 			|		|
+		 'update_thermo_from_hs', 'update_thermo_from_pT', 			|		|	
+		 'update_thermo_from_ps', 'update_thermo_from_rhoT', 			|		|
+		 'update_thermo_from_rhop', 'update_thermo_from_rhou', 			|		|
+		 'update_trans_coeffs']							|		|	
+		-> GasState attributes: 						|		|
+		['Cp', 'Cv', 'Prandtl', 'R', 'T', 'T_modes', 'a', 'ceaSavedData', 	|		|
+		 'conc', 'conc_as_dict', 'copy_values', 'dpdrho_const_T', 'enthalpy', 	|		|	
+		 'enthalpy_isp', 'entropy', 'entropy_isp', 'gamma', 			|		|
+		 'gibbs_free_energy_isp', 'gmodel', 'id', 'internal_energy', 'k', 	|		|
+		 'k_modes', 'massf', 'massf_as_dict', 'molecular_mass', 'molef', 	|		|	
+		 'molef_as_dict', 'mu', 'p', 'rho', 'u', 'u_modes', 			|		|	
+		 'update_sound_speed', 'update_thermo_from_hs', 'update_thermo_from_pT',|		|	
+		 'update_thermo_from_ps', 'update_thermo_from_rhoT', 			|		|
+		 'update_thermo_from_rhop', 'update_thermo_from_rhou', 			|		|
+		 'update_trans_coeffs']							|		|
+		-> ThermochemicalReactor attributes:  					|		|
+		['filename1', 'filename2', 'gmodel', 'id', 'update_state']		|		|
+# Implement hierarchy of reconstruction schemes so we don't interpolate from regions	|		|			
+	we shouldn't have access to and to allow higher order reconstruction than the 	|		|			
+	number of ghost cell layers added 						|		|		
+# CFL ramping										|	Partial	|	6/10/22
+	-> fixed dt									|	Yes	|	6/10/22
+	-> fixed cfl									|	Yes	|	6/10/22
+	-> ramp cfl using tCurrent							|	Yes	|	6/10/22
+	-> ramp cfl using currentStep							|	Yes	|	6/10/22
+	-> ramp dt until minimum cfl is reached, then ramp using tCurrent		|		|		
+		- Error caused when evaluating dt_ramped after a large number of steps,	|		|		
+		  exponential manner of dt_ramped goes out of math range. Need to stop 	|		|	
+		  evaluating dt_ramped after minimum cfl value has been reached.	|		|			
+	-> ramp dt until minimum cfl is reached, then ramp using currentStep		|		|	
+		- Error caused when evaluating dt_ramped after a large number of steps, |		|	
+		  exponential manner of dt_ramped goes out of math range. Need to stop 	|		|	
+		  evaluating dt_ramped after minimum cfl value has been reached.	|		|
+# Residual plotting									|		|
+	-> Plotting residuals of rates of change of conserved variables to assess if 	|		|
+	   steady state has been achieved						|		|
+	-> L2 norm, don't bother with L_inf norm because this is extremely hard to	|		|
+	   satisfy									|		|
+# Implement multi-channel flow								|		|
+	-> Test if defining lists of neighbouring interface Ids works for having 	|		|
+	   multiple 1D streams								|		|
+# Apply Google's code style rules to files						|		|
+	-> This will include a lot of errors						|		|
+# Change how west and east cells are located when updating conserved properties		|		|
+	-> Currently being found by index 0 of reconstruction stencils, but this will 	|		|
+	   fail when enforcing single sided reconstruction				|		|
+# Restructure GasState and GasModel data to align with Eilmer implementation		|		|
+# Implement parameter sweeping which will include changing values of constants in 	|		|
+  functions. After running simulation with these new values, should return back to old	|		|
+  values.										|		|
+	-> Use this as guide 								|		|
+		https://stackoverflow.com/questions/39086/search-and-replace-a-line-in-a-file-in-python	|
+# Add optional simulation description string(s) to Solver class which will then add more|		|
+  details to data files and data file names						|		|
+	-> Eg "FiniteRateChem8Reactions" to be included in data file names		|		|
+	-> Eg "H2 O2 8 reaction finite rate chemistry simulation with Arrhenius 	|		|
+	   coefficients" to be included in data file					|		|
+# Change specific component models to be child classes of meshObject class 		|	YES	|	WHILE AGO
+	-> Gives consistency for when jointMesh is used in prepping or not		|	YES	|	WHILE AGO
+# Fix nL and nR counts after time step, they aren't being reset at the end of each time |		|
+	step.										|		|
+# Add transient interface flux extraction						|	YES	|	WHILE AGO
+Last updated: November 22 2022
