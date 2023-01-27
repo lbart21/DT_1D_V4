@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 constants = {   "gamma"     :   1.4,
                 "Cp"        :   1004.8613604972,
                 "Cv"        :   717.758115,

@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
 class FluidModel():
     def __init__(self, fluidDefinition) -> None:

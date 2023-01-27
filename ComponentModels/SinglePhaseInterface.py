@@ -1,10 +1,15 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
 import importlib
 import sys
-from Algorithms.DesignToolAlgorithmV3_1D.Reconstruction.Reconstruction import getReconstruction
-from Algorithms.DesignToolAlgorithmV3_1D.Fluxes.fluidFluxes import *
-from Algorithms.DesignToolAlgorithmV3_1D.Reconstruction.LocateNeighbouringCellIndices import findIdxOfCellRecursively
-from Algorithms.DesignToolAlgorithmV3_1D.FluidModel.FlowState import FlowState
+from Algorithms.DesignToolAlgorithmV4_1D.Reconstruction.Reconstruction import getReconstruction
+from Algorithms.DesignToolAlgorithmV4_1D.Fluxes.fluidFluxes import *
+from Algorithms.DesignToolAlgorithmV4_1D.Reconstruction.LocateNeighbouringCellIndices import findIdxOfCellRecursively
+from Algorithms.DesignToolAlgorithmV4_1D.FluidModel.FlowState import FlowState
 from gdtk.gas import GasModel, GasState
 
 class SinglePhaseInterface():
@@ -64,6 +69,7 @@ class SinglePhaseInterface():
                 else:
                     setattr(self.LftState.fluid_state, prop, LftProp)
                     setattr(self.RghtState.fluid_state, prop, RghtProp)
+
             #print(self.LftState, self.RghtState)
             if self.updateFrom == "pT":
                 self.LftState.fluid_state.update_thermo_from_pT()

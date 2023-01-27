@@ -1,6 +1,11 @@
-from Algorithms.DesignToolAlgorithmV3_1D.ComponentModels.SinglePhaseInterface import SinglePhaseInterface
-from Algorithms.DesignToolAlgorithmV3_1D.ComponentModels.SinglePhaseConicalNozzleCell import SinglePhaseConicalNozzleCell
-from Algorithms.DesignToolAlgorithmV3_1D.ComponentModels.meshObject import meshObject
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
+from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.SinglePhaseInterface import SinglePhaseInterface
+from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.SinglePhaseConicalNozzleCell import SinglePhaseConicalNozzleCell
+from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.meshObject import meshObject
 import numpy as np
 from copy import deepcopy
 

@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 constants = {
     "p_inf" : 6.2178e8,
     "b"     : 6.7212e-4,

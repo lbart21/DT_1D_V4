@@ -1,25 +1,37 @@
-def findIdxOfCellRecursively(interfaceID, recursionDepth, direction, \
-                                mapInterfaceIDToEastCellIdx, cellArray, \
-                                mapCellIDToEastInterfaceIdx, mapInterfaceIDToWestCellIdx, \
-                                mapCellIDToWestInterfaceIdx, interfaceArray):
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
+def find_idx_of_cell_recursively(interface_id, recursion_depth, direction, \
+                                map_interface_id_to_east_cell_idx, cell_array, \
+                                map_cell_id_to_east_interface_idx, \
+                                map_interface_id_to_west_cell_idx, \
+                                map_cell_id_to_west_interface_idx, interface_array):
         """ Given interface ID, direction you want to look in and how far you want to look, return the index of the cell that you end at
-        Eg. recursionDepth = 1, direction = "East" will give you the index of the East cell of the interface [ | | | | | !0| | | | | | ]
-            recursionDepth = 3, direction = "West" will give you the index of the West cell of the West cell of the West cell of the interface [ | | | |0| | ! | | | | | ]
+        Eg. recursion_depth = 1, direction = "East" will give you the index of the East cell of the interface [ | | | | | !0| | | | | | ]
+            recursion_depth = 3, direction = "West" will give you the index of the West cell of the West cell of the West cell of the interface [ | | | |0| | ! | | | | | ]
         """
-        currentInterfaceID = interfaceID
-        currentRecursionDepth = 0
-        while currentRecursionDepth < recursionDepth:
+        current_interface_id = interface_id
+        current_recursion_depth = 0
+        while current_recursion_depth < recursion_depth:
             if direction == "East":
-                newCellIdx = mapInterfaceIDToEastCellIdx[currentInterfaceID]
-                newCellID = cellArray[newCellIdx].cell_ID
-                currentRecursionDepth += 1
-                if currentRecursionDepth != recursionDepth:
-                    currentInterfaceID = interfaceArray[mapCellIDToEastInterfaceIdx[newCellID]].interface_ID
+                new_cell_idx = map_interface_id_to_east_cell_idx[current_interface_id]
+                new_cell_id = cell_array[new_cell_idx].cell_id
+                current_recursion_depth += 1
+                if current_recursion_depth != recursion_depth:
+                    if len(map_cell_id_to_east_interface_idx[new_cell_id]) > 1:
+                        print("Reconstuction entering multi-interface cell boundary is not implemented yet.")
+                    else:
+                        current_interface_id = interface_array[map_cell_id_to_east_interface_idx[new_cell_id][0]].interface_id
             
             if direction == "West":
-                newCellIdx = mapInterfaceIDToWestCellIdx[currentInterfaceID]
-                newCellID = cellArray[newCellIdx].cell_ID
-                currentRecursionDepth += 1
-                if currentRecursionDepth != recursionDepth:
-                    currentInterfaceID = interfaceArray[mapCellIDToWestInterfaceIdx[newCellID]].interface_ID
-        return newCellID
+                new_cell_idx = map_interface_id_to_west_cell_idx[current_interface_id]
+                new_cell_id = cell_array[new_cell_idx].cell_id
+                current_recursion_depth += 1
+                if current_recursion_depth != recursion_depth:
+                    if len(map_cell_id_to_west_interface_idx[new_cell_id]) > 1:
+                        print("Reconstuction entering multi-interface cell boundary is not implemented yet.")
+                    else:
+                        current_interface_id = interface_array[map_cell_id_to_west_interface_idx[new_cell_id][0]].interface_id
+        return new_cell_id

@@ -1,45 +1,50 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import os
 
-def WriteToDataFile(cellArray, time, labels, flow_property_variables) -> None:
+def write_to_data_file(cellArray, time, labels, flow_property_variables) -> None:
     cwd = os.getcwd()
-    for compLabel in labels:
-        filename = "dataAt" + str(format(time, ".9f")) +"forComponent" + compLabel + ".txt"
+    for comp_label in labels:
+        filename = "dataAt" + str(format(time, ".9f")) +"forComponent" + comp_label + ".txt"
         file = open(cwd + "/data/" + filename, "w")
-        file.write("Label: " + compLabel + "\n")
+        file.write("Label: " + comp_label + "\n")
         file.write("Time: " + str(time) + "\n")
         nCells = len(cellArray)
         firstCellInComponent = True
         for cell_idx in range(nCells):
-            if cellArray[cell_idx].label == compLabel:
+            if cellArray[cell_idx].label == comp_label:
                 if cellArray[cell_idx].phase == "Single":
                     cellFlowData = {}
                     if "vel_x" in flow_property_variables:
-                        cellFlowData["vel_x"] = cellArray[cell_idx].fs.vel_x
+                        cellFlowData["vel_x"] = cellArray[cell_idx].flow_state.vel_x
                     if "Ma" in flow_property_variables:
-                        cellFlowData["Ma"] = cellArray[cell_idx].fs.vel_x / cellArray[cell_idx].fs.fluid_state.a
+                        cellFlowData["Ma"] = cellArray[cell_idx].flow_state.vel_x / cellArray[cell_idx].flow_state.fluid_state.a
                     if "p" in flow_property_variables:
-                        cellFlowData["p"] = cellArray[cell_idx].fs.fluid_state.p
+                        cellFlowData["p"] = cellArray[cell_idx].flow_state.fluid_state.p
                     if "T" in flow_property_variables:
-                        cellFlowData["T"] = cellArray[cell_idx].fs.fluid_state.T
+                        cellFlowData["T"] = cellArray[cell_idx].flow_state.fluid_state.T
                     if "rho" in flow_property_variables:
-                        cellFlowData["rho"] = cellArray[cell_idx].fs.fluid_state.rho
+                        cellFlowData["rho"] = cellArray[cell_idx].flow_state.fluid_state.rho
                     if "gamma" in flow_property_variables:
-                        cellFlowData["gamma"] = cellArray[cell_idx].fs.fluid_state.gamma
+                        cellFlowData["gamma"] = cellArray[cell_idx].flow_state.fluid_state.gamma
                     if "a" in flow_property_variables:
-                        cellFlowData["a"] = cellArray[cell_idx].fs.fluid_state.a
+                        cellFlowData["a"] = cellArray[cell_idx].flow_state.fluid_state.a
                     if "u" in flow_property_variables:
-                        cellFlowData["u"] = cellArray[cell_idx].fs.fluid_state.u
+                        cellFlowData["u"] = cellArray[cell_idx].flow_state.fluid_state.u
                     if "h" in flow_property_variables:
-                        cellFlowData["h"] = cellArray[cell_idx].fs.fluid_state.enthalpy
+                        cellFlowData["h"] = cellArray[cell_idx].flow_state.fluid_state.enthalpy
                     if "p_t" in flow_property_variables:
-                        p = cellArray[cell_idx].fs.fluid_state.p
-                        gamma = cellArray[cell_idx].fs.fluid_state.gamma
-                        Ma = cellArray[cell_idx].fs.vel_x / cellArray[cell_idx].fs.fluid_state.a
+                        p = cellArray[cell_idx].flow_state.fluid_state.p
+                        gamma = cellArray[cell_idx].flow_state.fluid_state.gamma
+                        Ma = cellArray[cell_idx].flow_state.vel_x / cellArray[cell_idx].flow_state.fluid_state.a
                         cellFlowData["p_t"] = p * (1.0 + 0.5 * (gamma - 1.0) * Ma ** 2.0) ** (gamma / (gamma - 1.0))
                     if "T_t" in flow_property_variables:
-                        T = cellArray[cell_idx].fs.fluid_state.T
-                        gamma = cellArray[cell_idx].fs.fluid_state.gamma
-                        Ma = cellArray[cell_idx].fs.vel_x / cellArray[cell_idx].fs.fluid_state.a
+                        T = cellArray[cell_idx].flow_state.fluid_state.T
+                        gamma = cellArray[cell_idx].flow_state.fluid_state.gamma
+                        Ma = cellArray[cell_idx].flow_state.vel_x / cellArray[cell_idx].flow_state.fluid_state.a
                         cellFlowData["T_t"] = T * (1.0 + 0.5 * (gamma - 1.0) * Ma ** 2.0)
 
 
@@ -56,7 +61,7 @@ def WriteToDataFile(cellArray, time, labels, flow_property_variables) -> None:
                     jointDataForCell = {**cellArray[cell_idx].gasFlowState.fs, **cellArray[cell_idx].liquidFlowState.fs, **cellArray[cell_idx].GEO}
                     
                 variableNames = list(jointDataForCell.keys())
-                if firstCellInComponent == True:
+                if firstCellInComponent is True:
                     # Add variable names to file
                     file.write("Variables: " + str(len(variableNames)) + "\n")
                     file.write(" ".join(variableNames) + "\n")

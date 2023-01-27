@@ -1,5 +1,10 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
-from Algorithms.DesignToolAlgorithmV3_1D.FluidModel.FlowState import FlowState
+from Algorithms.DesignToolAlgorithmV4_1D.FluidModel.FlowState import FlowState
 from gdtk.gas import GasModel, GasState
 class SinglePhaseStraightPipeCellWithHeat():
     def __init__(self, cell_ID, label, heatFlux) -> None:

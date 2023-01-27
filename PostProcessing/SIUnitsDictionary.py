@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 SIUnits = {
     "T"                         : r'$K$', #K
     "T_G"                       : r'$K$',

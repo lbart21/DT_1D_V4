@@ -1,4 +1,9 @@
-def FixedPTOutFlow_BC(mesh, BC):
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
+def fixed_pt_outflow_bc(mesh, BC):
     """
     Ghost cells are mirrored values of the interior cells. Specify outlet pressure
     and temperature and update from PT.
@@ -9,9 +14,9 @@ def FixedPTOutFlow_BC(mesh, BC):
     p = gs.p
     T = gs.T
 
-    for cell in range(len(mesh.cellArray)):
-        mesh.cellArray[cell].fs.fluid_state.p = p
-        mesh.cellArray[cell].fs.fluid_state.T = T
-        mesh.cellArray[cell].flowState.update_thermo_from_pT()
+    for cell in mesh.cell_array:
+        cell.flow_state.fluid_state.p = p
+        cell.flow_state.fluid_state.T = T
+        cell.flow_stiate.fluid_state.update_thermo_from_pT()
 
     return mesh

@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 from copy import deepcopy
 
 def FromStagnationWithMassFlowRateInFlow_BC(mesh, BC, onWestBoundaryBool):
@@ -43,7 +48,7 @@ def FromStagnationWithMassFlowRateInFlow_BC(mesh, BC, onWestBoundaryBool):
     flowState.vel_x = bulk_speed
     flowState.fluid_state.update_thermo_from_hs(h = static_enthalpy, s = flowState.fluid_state.entropy)
 
-    for cell in range(len(mesh.cellArray)):
+    for cell in range(len(mesh.cell_array)):
         mesh.cellArray[cell].fs.vel_x = flowState.vel_x
         mesh.cellArray[cell].fs.fluid_state.copy_values(flowState.fluid_state)
         

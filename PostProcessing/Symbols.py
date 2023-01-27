@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 symbols = {
     "T"                     : r'$T$',
     "T_G"                   : r'$T_{G}$',

@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
 
 class eilmer_vanAlbada():

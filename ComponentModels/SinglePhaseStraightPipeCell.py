@@ -1,7 +1,12 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
 import importlib
 import sys
-from Algorithms.DesignToolAlgorithmV3_1D.FluidModel.FlowState import FlowState
+from Algorithms.DesignToolAlgorithmV4_1D.FluidModel.FlowState import FlowState
 from gdtk.gas import GasModel, GasState
 
 class SinglePhaseStraightPipeCell():
@@ -9,8 +14,6 @@ class SinglePhaseStraightPipeCell():
         self.GEO = {}
         self.flowState = {}
         self.cell_ID = cell_ID
-        self.WestInterface = None
-        self.EastInterface = None
         self.label = label
         self.phase = "Single"
         self.InteriorCellFlag = True

@@ -1,3 +1,8 @@
+"""
+Function:
+Author: Luke Bartholomew
+Edits:
+"""
 import math as m
 import numpy as np
 
@@ -22,21 +27,30 @@ class AUSMPlusupORIGINAL():
         self.M_R = vel_x_R / self.a_half_forMa
 
         self.Mbar_sq = (vel_x_L ** 2.0 + vel_x_R ** 2.0) / (2.0 * self.a_half ** 2.0)
-        self.M0_sq = min(1.0, max(self.Mbar_sq, self.M_inf))
+        #print(self.Mbar_sq)
+        self.M0_sq = min(1.0, max(self.Mbar_sq, self.M_inf ** 2.0))
+        #print(self.M0_sq)
         self.fa = self.M0_sq ** 0.5 * (2.0 - self.M0_sq ** 0.5)
+        #print(self.fa)
         self.alpha = 0.1875 * (-4.0 + 5.0 * self.fa ** 2.0)
+        #print(self.alpha)
         M4plus_ML = self.M_4_p(M = self.M_L, beta = self.beta)
+
         P5plus_ML = self.P_5_p(M = self.M_L, alpha = self.alpha)
+        #print(P5plus_ML)
     
         M4minus_MR = self.M_4_m(M = self.M_R, beta = self.beta)
         P5minus_MR = self.P_5_m(M = self.M_R, alpha = self.alpha)
+        #print(P5minus_MR)
 
         Mp = -1.0 * self.K_p * max(1.0 - self.sigma * self.Mbar_sq, 0.0) * (p_R - p_L) / (self.fa * self.rho_half * self.a_half ** 2.0)
         #print("max function", max(1.0) - self.sigma * self.Mbar_sq, 0.0)))
         Pu = -1.0 * self.K_u * P5plus_ML * P5minus_MR * (rho_L + rho_R) * self.fa * self.a_half * (vel_x_R - vel_x_L)
-
+        #print(Pu)
         Ma_half = M4plus_ML + M4minus_MR + Mp
+        #print(M4plus_ML, M4minus_MR, Mp)
         vel_x_half = self.a_half_forMa * Ma_half
+        #print(self.a_half_forMa, Ma_half, self.a_half)
         self.fluxes = {}
         self.fluxes["Ma"] = Ma_half
         self.fluxes["vel_x"] = vel_x_half
@@ -90,10 +104,13 @@ class AUSMPlusupORIGINAL():
     
 
 class AUSMPlusupPAPER():
-    def __init__(self, a_L_forMa, a_L, p_L, h_L, rho_L, vel_x_L, a_R_forMa, a_R, p_R, h_R, rho_R, vel_x_R) -> None:
+    def __init__(self, a_L_forMa, a_L, p_L, u_L, rho_L, vel_x_L, a_R_forMa, a_R, p_R, u_R, rho_R, vel_x_R) -> None:
         self.K_p = 0.25
         self.K_u = 0.75
 
+        h_L = u_L + p_L / rho_L
+        h_R = u_R + p_R / rho_R
+        
         H_L = h_L + 0.5 * vel_x_L ** 2.0
         H_R = h_R + 0.5 * vel_x_R ** 2.0
 
