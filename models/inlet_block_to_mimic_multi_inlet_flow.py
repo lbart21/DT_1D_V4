@@ -3,45 +3,45 @@ Function:
 Author: Luke Bartholomew
 Edits:
 """
-from prefilled_single_inlet_mesh_object import basic1DMeshObject
-from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.inlet_cell_to_mimic_multi_inlet_flow import CellToMimicMultiInletFlow
-from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.single_phase_multi_species_nonreactive_interface import SinglePhaseMultiSpeciesNonReactiveInterface
+from Algorithms.DT_1D_V4.models.prefilled_single_inlet_mesh_object import SingleInlet1DMeshObject
+from Algorithms.DT_1D_V4.models.inlet_cell_to_mimic_multi_inlet_flow import CellToMimicMultiInletFlow
+from Algorithms.DT_1D_V4.models.single_phase_uniform_massf_interface import SinglePhaseUniformMassfInterface
 
 import numpy as np
-class InletBlockToMimicMultiInletFlow(basic1DMeshObject):
+class InletBlockToMimicMultiInletFlow(SingleInlet1DMeshObject):
     def __init__(self, inlet_flow_state, init_flow_state, geometry, inlet_area, comp_label, \
-                        reconstruction_scheme, limiter, reconstruction_properties, update_from, flux_scheme) -> None:
-        super().__init__(nCells = 1, reversed = False)
+                        recon_scheme, limiter, recon_props, update_from, flux_scheme) -> None:
+        super().__init__(n_cells = 1, reverse_direction_for_ghost_cells = False)
         self.component_labels = [comp_label]
         
         self.initialise_cell(comp_label = comp_label, inlet_flow_state = inlet_flow_state, \
-                            init_flow_state = init_flow_state, Geometry = geometry, inlet_area = inlet_area)
+                            init_flow_state = init_flow_state, geometry = geometry, inlet_area = inlet_area)
 
-        self.initialise_interfaces(reconstruction_scheme = reconstruction_scheme, limiter = limiter, \
-                            reconstruction_properties = reconstruction_properties, update_from = update_from, \
-                            flux_scheme = flux_scheme, Geometry = geometry, init_flow_state = init_flow_state)
+        self.initialise_interfaces(recon_scheme = recon_scheme, limiter = limiter, \
+                            recon_props = recon_props, update_from = update_from, \
+                            flux_scheme = flux_scheme, geometry = geometry, init_flow_state = init_flow_state)
 
-    def initialise_cell(self, comp_label, inlet_flow_state, init_flow_state, Geometry, inlet_area):
+    def initialise_cell(self, comp_label, inlet_flow_state, init_flow_state, geometry, inlet_area):
         cell = CellToMimicMultiInletFlow(cell_id = 0, label = comp_label, source_fs = inlet_flow_state, source_area = inlet_area)
-        [D, L] = Geometry
-        GEO = {
+        [D, L] = geometry
+        geo = {
                 "dx"    :   L,
                 "dV"    :   0.25 * np.pi * D ** 2 * L,
                 "A_c"   :   0.25 * np.pi * D ** 2,
                 "A_s"   :   np.pi * D * L,
                 "pos_x" :   0.5 * L
         }
-        cell.fill_geometry(Geometry = GEO)
+        cell.fill_geometry(geometry = geo)
         cell.flow_state = init_flow_state
-        cell.initialise_conserved_properties()
+        cell.initialise_conserved_quantities()
         self.cell_array[0] = cell
 
-    def initialise_interfaces(self, reconstruction_scheme, limiter, reconstruction_properties, update_from, flux_scheme, Geometry, init_flow_state):
-        [D, L] = Geometry
+    def initialise_interfaces(self, recon_scheme, limiter, recon_props, update_from, flux_scheme, geometry, init_flow_state):
+        [D, _] = geometry
         for i in range(2):
-            interface = SinglePhaseMultiSpeciesNonReactiveInterface(interface_id = i, nL = i, nR = 1 - i, \
-                                        reconstruction_scheme = reconstruction_scheme, limiter = limiter, \
-                                        reconstruction_properties = reconstruction_properties, \
+            interface = SinglePhaseUniformMassfInterface(interface_id = i, nL = i, nR = 1 - i, \
+                                        recon_scheme = recon_scheme, limiter = limiter, \
+                                        recon_props = recon_props, \
                                         update_from = update_from, flux_scheme = flux_scheme)
             
             flow_state_object = init_flow_state.__class__
@@ -55,8 +55,8 @@ class InletBlockToMimicMultiInletFlow(basic1DMeshObject):
             fs_lft = flow_state_object(gs_lft)
             fs_rght = flow_state_object(gs_rght)
 
-            GEO = {"A"  : 0.25 * np.pi * D ** 2}
-            interface.fill_geometry(geometry = GEO)
+            geo = {"A"  : 0.25 * np.pi * D ** 2}
+            interface.fill_geometry(geometry = geo)
             interface.lft_state = fs_lft
             interface.rght_state = fs_rght
             self.interface_array[i] = interface

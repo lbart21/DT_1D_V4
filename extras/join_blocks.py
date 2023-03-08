@@ -5,8 +5,8 @@ Edits:
     Jan 17 2023: Reworked from V3 model to work with list of lists for cell to interface mapping
              and optimised by reducing number of repeated loops over arrays
 """
-# pylint: disable = R0902, R0903
-from Algorithms.DesignToolAlgorithmV4_1D.ComponentModels.empty_mesh_object import EmptyMeshObject
+# pylint: disable = too-many-locals
+from Algorithms.DT_1D_V4.models.empty_mesh_object import EmptyMeshObject
 class JointBlock(EmptyMeshObject):
     """
     Take 2 mesh objects and return a joint mesh.
@@ -62,28 +62,28 @@ class JointBlock(EmptyMeshObject):
         """
         if not adding_ghost_cells_bool:
             if joining_to_west_edge: #Need to find location of joining cell of mesh2. Need to look west of joining interface of mesh2
-                mesh_2_joining_boundary_cell_idx = mesh_object_2.map_interface_id_to_west_cell_idx[block_2_interface_id_being_replaced]
-                mesh_2_joining_boundary_cell = mesh_object_2.cell_array[mesh_2_joining_boundary_cell_idx]
-                mesh_2_joining_boundary_cell_location = mesh_2_joining_boundary_cell.GEO["pos_x"]
-                mesh_2_joining_boundary_cell_width = mesh_2_joining_boundary_cell.GEO["dx"]
+                mesh_2_boundary_cell_idx = mesh_object_2.map_interface_id_to_west_cell_idx[block_2_interface_id_being_replaced]
+                mesh_2_boundary_cell = mesh_object_2.cell_array[mesh_2_boundary_cell_idx]
+                mesh_2_boundary_cell_location = mesh_2_boundary_cell.geo["pos_x"]
+                mesh_2_boundary_cell_width = mesh_2_boundary_cell.geo["dx"]
                 for mesh_1_cell in mesh_object_1.cell_array:
                     if new_component_label is not None:
                         mesh_1_cell.label = new_component_label
-                    mesh_1_cell.GEO["pos_x"] += mesh_2_joining_boundary_cell_location + 0.5 * mesh_2_joining_boundary_cell_width
+                    mesh_1_cell.geo["pos_x"] += mesh_2_boundary_cell_location + 0.5 * mesh_2_boundary_cell_width
                 if new_component_label is not None:
                     for mesh_2_cell in mesh_object_2.cell_array:
                         mesh_2_cell.label = new_component_label
                 
             elif joining_to_east_edge: #Need to find location of joining block of block1. Need to look west of interface of mesh2.
-                mesh_1_joining_boundary_cell_idx = mesh_object_1.map_interface_id_to_west_cell_idx[block_1_interface_id_being_replaced]
-                mesh_1_joining_boundary_cell = mesh_object_1.cell_array[mesh_1_joining_boundary_cell_idx]
-                mesh_1_joining_boundary_cell_location = mesh_1_joining_boundary_cell.GEO["pos_x"]
-                mesh_1_joining_boundary_cell_width = mesh_1_joining_boundary_cell.GEO["dx"]
+                mesh_1_boundary_cell_idx = mesh_object_1.map_interface_id_to_west_cell_idx[block_1_interface_id_being_replaced]
+                mesh_1_boundary_cell = mesh_object_1.cell_array[mesh_1_boundary_cell_idx]
+                mesh_1_boundary_cell_location = mesh_1_boundary_cell.geo["pos_x"]
+                mesh_1_boundary_cell_width = mesh_1_boundary_cell.geo["dx"]
                 if new_component_label is not None:
                     for mesh_1_cell in mesh_object_1.cell_array:
                         mesh_1_cell.label = new_component_label
                 for mesh_2_cell in mesh_object_2.cell_array:
-                    mesh_2_cell.GEO["pos_x"] += mesh_1_joining_boundary_cell_location + 0.5 * mesh_1_joining_boundary_cell_width
+                    mesh_2_cell.geo["pos_x"] += mesh_1_boundary_cell_location + 0.5 * mesh_1_boundary_cell_width
                     mesh_2_cell.label = new_component_label
                 
             print("Individual meshs' boundary interface indices were: ", mesh_object_1.boundary_interface_ids, " and ", mesh_object_2.boundary_interface_ids)
@@ -96,11 +96,11 @@ class JointBlock(EmptyMeshObject):
             mesh_object_1.boundary_interface_ids.remove(block_1_interface_id_being_replaced)
             mesh_object_2.boundary_interface_ids.remove(block_2_interface_id_being_replaced)
 
-            self.boundary_interface_ids = mesh_object_1.boundary_interface_ids + [i + ninterfaces_mesh_1 for i in mesh_object_2.boundary_interface_ids]
+            self.boundary_interface_ids = mesh_object_1.boundary_interface_ids + [i + ninterfaces_mesh_1 - 1 for i in mesh_object_2.boundary_interface_ids]
 
             print("New mesh boundary interface indices are: ", self.boundary_interface_ids)
             
-            mesh_object_2.boundary_conditions = [[i[0] + ninterfaces_mesh_1] + i[1::] for i in mesh_object_2.boundary_conditions]
+            mesh_object_2.boundary_conditions = [[i[0] + ninterfaces_mesh_1 - 1] + i[1::] for i in mesh_object_2.boundary_conditions]
 
             self.boundary_conditions = mesh_object_1.boundary_conditions + mesh_object_2.boundary_conditions
 

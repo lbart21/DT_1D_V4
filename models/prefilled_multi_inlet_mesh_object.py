@@ -4,31 +4,30 @@ Author: Luke Bartholomew
 Edits:
     Jan 17 2023: Reworked to generate cell_to_interface mapping as list of lists.
 """
-class basic1DMeshObject():
-    """
-    Basically the same as the meshObject class, but an assumed cell/interface
-    order allows an easier definition of blocks.
-    reversed decides if cells are expected to be generated in a normal fashion
-    of west to east or in reverse from east to west. This is only really used in
-    boundary cell generation where west boundary ghost cell layers are generated
-    in reverse order.
-    """
-    def __init__(self, nCells, reversed = False) -> None:
-        self.cell_array = [None] * nCells
-        self.interface_array = [None] * (nCells + 1)
-        if reversed:
-            self.map_cell_id_to_west_interface_idx = [[i + 1] for i in range(nCells)]
-            self.map_cell_id_to_east_interface_idx = [[i] for i in range(nCells)]
-            self.map_interface_id_to_west_cell_idx = [i for i in range(nCells)] + [None] 
-            self.map_interface_id_to_east_cell_idx = [None] + [i for i in range(nCells)] 
-            
+class MultiInlet1DMeshObject():
+    def __init__(self, n_cells, n_inlets, reverse_direction_for_mirrored_flow = False) -> None:
+        """
+        reverse_direction = False -> multiple inlets are on west edge of block
+                            True  -> multiple inlets are on east edge of block
+        """
+        n_interfaces = n_cells + n_inlets
+        self.cell_array = [None] * n_cells
+        self.interface_array = [None] * n_interfaces
+        if reverse_direction_for_mirrored_flow:
+            self.map_cell_id_to_west_interface_idx = [[i] for i in range(n_cells)] # Done
+            self.map_cell_id_to_east_interface_idx = [[i + 1] for i in range(n_cells - 1)] + [list(range(n_cells, n_cells + n_inlets))] # Done
+            self.map_interface_id_to_west_cell_idx = [None] + list(range(n_cells - 1)) + [n_cells - 1] * n_inlets # Done
+            self.map_interface_id_to_east_cell_idx = list(range(n_cells)) + [None] * n_inlets # Done
+            self.boundary_interface_ids = [0] + [n_cells + i for i in range(n_inlets)] # Done
         else:
-            self.map_cell_id_to_west_interface_idx = [[i] for i in range(nCells)]
-            self.map_cell_id_to_east_interface_idx = [[i + 1] for i in range(nCells)]
-            self.map_interface_id_to_west_cell_idx = [None] + [i for i in range(nCells)]
-            self.map_interface_id_to_east_cell_idx = [i for i in range(nCells)] + [None]
+            self.map_cell_id_to_west_interface_idx = [list(range(n_inlets))] + [[i + n_inlets] for i in range(n_cells - 1)] # Done
+            self.map_cell_id_to_east_interface_idx = [[i + n_inlets] for i in range(n_cells)] # Done
+            self.map_interface_id_to_west_cell_idx = [None] * n_inlets + list(range(n_cells)) # Done
+            self.map_interface_id_to_east_cell_idx = [0] * n_inlets + list(range(1, n_cells)) + [None] # Done
+            self.boundary_interface_ids = list(range(n_inlets)) + [n_interfaces - 1] # Done
+
         self.component_labels = []
         self.boundary_conditions = []
-        self.boundary_interface_ids = [0, nCells]
         self.cell_idx_to_track = []
         self.interface_idx_to_track = []
+        

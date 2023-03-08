@@ -234,8 +234,7 @@ expected-line-ending-format=
 [BASIC]
 
 # Good variable names which should always be accepted, separated by a comma
-good-names=i,j,k,ex,Run,_,a,p,T,gs,u,h,BC,dV
-
+good-names=i,j,k,ex,Run,_,a,T,gs,u,h,BC,BCs,dV,T_stag,A_boundary,D,L,A_inlet,nL,nR,qL_stencil,qR_stencil,dxL_stencil,dxR_stencil,cell_L,cell_R,Ma,A_e
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
 good-names-rgxs=
@@ -258,13 +257,13 @@ include-naming-hint=no
 function-naming-style=snake_case
 
 # Regular expression matching correct function names
-function-rgx=[a-z_][a-z0-9_]{2,30}$
+function-rgx=[a-z_][a-z0-9_]{0,39}$
 
 # Naming style matching correct variable names.
 variable-naming-style=snake_case
 
 # Regular expression matching correct variable names
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+variable-rgx=[a-z_][a-z0-9_]{0,39}$
 
 # Naming style matching correct constant names.
 const-naming-style=UPPER_CASE
@@ -282,7 +281,7 @@ attr-rgx=[a-z_][a-z0-9_]{2,}$
 argument-naming-style=snake_case
 
 # Regular expression matching correct argument names
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+argument-rgx=[a-z_][a-z0-9_]{0,59}$
 
 # Naming style matching correct class attribute names.
 class-attribute-naming-style=any
@@ -415,7 +414,7 @@ max-spelling-suggestions=2
 [DESIGN]
 
 # Maximum number of arguments for function / method
-max-args=10
+max-args=15
 
 # Maximum number of locals for function / method body
 max-locals=25
@@ -424,10 +423,10 @@ max-locals=25
 max-returns=11
 
 # Maximum number of branch for function / method body
-max-branches=27
+max-branches=50
 
 # Maximum number of statements in function / method body
-max-statements=100
+max-statements=1000
 
 # Maximum number of parents for a class (see R0901).
 max-parents=7
@@ -436,10 +435,10 @@ max-parents=7
 ignored-parents=
 
 # Maximum number of attributes for a class (see R0902).
-max-attributes=11
+max-attributes=20
 
 # Minimum number of public methods for a class (see R0903).
-min-public-methods=2
+min-public-methods=0
 
 # Maximum number of public methods for a class (see R0904).
 max-public-methods=25
@@ -536,7 +535,7 @@ bad-functions=map,input
 [REFACTORING]
 
 # Maximum number of nested blocks for function / method body
-max-nested-blocks=5
+max-nested-blocks=8
 
 # Complete name of functions that never returns. When checking for
 # inconsistent-return-statements if a never returning function is called then

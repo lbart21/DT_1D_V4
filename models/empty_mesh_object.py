@@ -1,4 +1,3 @@
-# pylint: disable=R0902,R0903
 """
 Function:
 Author: Luke Bartholomew
