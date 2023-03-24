@@ -5,8 +5,8 @@ Edits:
 """
 import numpy as np
 
-from Algorithms.DT_1D_V4.models.interface_models.single_phase_uniform_massf_interface \
-            import SinglePhaseUniformMassfInterface
+from Algorithms.DT_1D_V4.models.interface_models.single_phase_multi_species_nonuniform_massf_interface \
+            import SinglePhaseMultiSpeciesNonUniformMassfInterface
 from Algorithms.DT_1D_V4.models.single_phase_multi_species_nonreactive_mixing_elliptic_nozzle.\
         single_phase_multi_species_nonreactive_mixing_elliptic_nozzle_cell \
             import SinglePhaseMultiSpeciesNonReactiveMixingEllipticNozzleCell
@@ -89,7 +89,7 @@ class SinglePhaseMultiSpeciesNonReactiveMixingEllipticNozzle(SingleInlet1DMeshOb
             fs_lft = flow_state_object(gs_lft)
             fs_rght = flow_state_object(gs_rght)
 
-            interface_object = SinglePhaseUniformMassfInterface(\
+            interface_object = SinglePhaseMultiSpeciesNonUniformMassfInterface(\
                                     interface_id = interface, nL = interface, \
                                     nR = n_cells - interface, \
                                     flux_scheme = flux_scheme, \
