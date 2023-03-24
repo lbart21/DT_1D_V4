@@ -154,5 +154,10 @@ SYMBOLS = {
 
     "A"                     : r'$A$',
 
-    "massf"                 : r'$Mass$' + ' ' + r'$Fraction$'
+    "massf"                 : r'$f$',
+
+    "molef"                 : r'$\chi$',
+
+    "D"                     : r'$D$',
+    "R"                     : r'$R$'
 }

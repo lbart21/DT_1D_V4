@@ -26,7 +26,7 @@ def mdot_from_stagnation_inflow_bc(mesh, BC, on_west_boundary_bool):
     p_boundary = mesh.cell_array[0].flow_state.fluid_state.p
     rho_boundary = mesh.cell_array[0].flow_state.fluid_state.rho
     rho_v_boundary = rho_boundary * vel_x_boundary
-    A_boundary = mesh.interfaceArray[0].geo["A"]
+    A_boundary = mesh.interface_array[0].geo["A"]
     dp_over_p = 0.5 * relaxation_factor / rho_boundary * ( (mass_flux / A_boundary) ** 2.0 \
                                                             - rho_v_boundary * abs(rho_v_boundary) ) / p_boundary
     new_p0 = (1.0 + dp_over_p) * p_stag

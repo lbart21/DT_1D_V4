@@ -219,6 +219,8 @@ class Integrate():
             #print("index: ", ind, "Mass:", cell.conservedProperties["mass"], "xMom:", cell.conservedProperties["xMom"], "Energy:", cell.conservedProperties["energy"])
 
     def add_boundary_conditions(self, BCs):
+
+        #print(self.mesh.map_interface_id_to_west_cell_idx, self.mesh.map_interface_id_to_east_cell_idx, "\n")
         
         for boundary_condition in BCs:
             self.total_ghost_cells += boundary_condition[1][1]
@@ -229,4 +231,4 @@ class Integrate():
                 self.mesh = JointBlock(mesh_object_1 = self.mesh, mesh_object_2 = ghost_cell_layer, \
                     block_1_interface_id_being_replaced = boundary_condition[0], block_2_interface_id_being_replaced = 0, \
                     new_interface = deepcopy(self.mesh.interface_array[boundary_condition[0]]), adding_ghost_cells_bool = True)
-            
+                #print(self.mesh.map_interface_id_to_west_cell_idx, self.mesh.map_interface_id_to_east_cell_idx, "\n")

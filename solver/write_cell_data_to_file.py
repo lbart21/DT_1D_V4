@@ -36,6 +36,11 @@ def write_cell_data_to_file(cell, time, flow_property_variables, sim_number):
                 mass_fraction_names = ["massf_" + name for name in species_names]
                 for ind, species in enumerate(mass_fraction_names):
                     cell_flow_data[species] = cell.flow_state.fluid_state.massf[ind]
+            if "molef" in flow_property_variables:
+                species_names = cell.flow_state.fluid_state.gmodel.species_names
+                mole_fraction_names = ["molef_" + name for name in species_names]
+                for ind, species in enumerate(mole_fraction_names):
+                    cell_flow_data[species] = cell.flow_state.fluid_state.molef[ind]
             if "p_t" in flow_property_variables:
                 gamma = cell.flow_state.fluid_state.gamma
                 Ma = cell.flow_state.vel_x / cell.flow_state.fluid_state.a
@@ -89,6 +94,11 @@ def write_cell_data_to_file(cell, time, flow_property_variables, sim_number):
                 mass_fraction_names = ["massf_" + name for name in species_names]
                 for ind, species in enumerate(mass_fraction_names):
                     cell_flow_data[species] = cell.flow_state.fluid_state.massf[ind]
+            if "molef" in flow_property_variables:
+                species_names = cell.flow_state.fluid_state.gmodel.species_names
+                mole_fraction_names = ["molef_" + name for name in species_names]
+                for ind, species in enumerate(mole_fraction_names):
+                    cell_flow_data[species] = cell.flow_state.fluid_state.molef[ind]
             if "p_t" in flow_property_variables:
                 gamma = cell.flow_state.fluid_state.gamma
                 Ma = cell.flow_state.vel_x / cell.flow_state.fluid_state.a

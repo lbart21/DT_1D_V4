@@ -34,7 +34,7 @@ class Solver():
         while t_current < t_final and abs(t_current - t_final) > time_tol:
             new_data = Integrate(mesh = current_mesh_object, cfl_flag = cfl_flag, t_current = t_current, current_step = current_step)
             t_current += new_data.dt_total
-            #print("t: ", t_current)
+            print("t: ", t_current)
             written_data = False
             rapid_data_written = False
             if t_current > t_write - t_write_tol:
