@@ -54,13 +54,10 @@ def write_to_data_file(cell_array, time, labels, flow_property_variables, sim_nu
                             cell_flow_data[name] = cell_array[cell_idx].flow_state.fluid_state.massf[ind]
                     if "molef" in flow_property_variables:
                         species_names = cell_array[cell_idx].flow_state.fluid_state.gmodel.species_names
-                        molef_names = ["massf_" + name for name in species_names]
+                        molef_names = ["molef_" + name for name in species_names]
                         for ind, name in enumerate(molef_names):
                             cell_flow_data[name] = cell_array[cell_idx].flow_state.fluid_state.molef[ind]
                             
-                    #cellFlowData = {var : getattr(cellArray[cell_idx].fs.fluid_state, var) for var in flow_property_variables if var != "vel_x"}
-                    #if "vel_x" in flow_property_variables:
-                        #cellFlowData["vel_x"] = getattr(cellArray[cell_idx].fs, "vel_x")
                     joint_data_for_cell = {**cell_flow_data, **cell_array[cell_idx].geo}
                     
                 else: #Two phase cell, add "_g" to all keys in gas flowState and "_l" to keys in liquid flowState

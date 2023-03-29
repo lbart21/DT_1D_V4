@@ -98,7 +98,7 @@ class GenerateSinglePlots():
             plt.title("Distribution of " + SYMBOLS[var] + " at t = " \
                                                     + formatted_title_time + r'$\mu$' + "s")
             
-            filename = "Sim" + str(sim_number) + ' ' + var + " distribution at t = " + formatted_file_name_time + ".jpg"
+            filename = "Sim " + str(sim_number) + ' ' + var + " distribution at t = " + formatted_file_name_time + ".jpg"
             plt.grid()
             mng = plt.get_current_fig_manager()
             mng.full_screen_toggle()
