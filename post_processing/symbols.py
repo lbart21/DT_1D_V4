@@ -158,6 +158,8 @@ SYMBOLS = {
 
     "molef"                 : r'$\chi$',
 
+    "conc"                  : r'$C$',
+
     "D"                     : r'$D$',
     "R"                     : r'$R$'
 }

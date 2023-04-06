@@ -1,0 +1,4 @@
+model = 'thermally perfect gas'
+species = {'H','H2','O','O2','H2O2','H2O','HO2','OH','Ar','He','N2'}
+options = {transport_database="prefer-chemkin"}
+-- Does not give errors now

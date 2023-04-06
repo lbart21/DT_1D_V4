@@ -89,6 +89,19 @@ class GenerateSinglePlots():
                 SYMBOLS[var] = r"$" + formatted_species_name + "$" + ' ' + r'$Mole$' + ' ' + r'$Fraction$'
                 plt.scatter(self.data_object.component_data["pos_x"], \
                             self.data_object.component_data[var], marker = '.')
+            
+            elif var == "conc":
+                column_names = list(self.data_object.component_data.columns)
+                conc_species_names = [species for species in column_names \
+                                                if len(species) > 4 and species[:4] == "conc"]
+                species_names = [species.split("_")[1] for species in conc_species_names]
+                for index, species in enumerate(species_names):
+                    if val.isnumeric():
+                        split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    plt.scatter(self.data_object.component_data["pos_x"], \
+                                self.data_object.component_data[conc_species_names[index]], \
+                                marker = '.', label = r"$" + formatted_species_name + "$")
 
             else: # All other properties
                 plt.scatter(self.data_object.component_data["pos_x"], self.data_object.component_data[var], marker = '.')
@@ -437,7 +450,7 @@ class Compare1DTo0DThurstProfiles():
         plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
         plt.close()
 
-class SinglePlotsWithMultipleYAxes():
+class SingleSpatialPlotsWithMultipleYAxes():
     def __init__(self, data_file, plot_vars, visible_axes, plot_number) -> None:
         # plot_vars = [[var_1, var_2, ...], [var_n], etc]
         # visible_axes = [int, int, int, etc] -> len(plot_vars) == len(visible_axes)
@@ -469,7 +482,6 @@ class SinglePlotsWithMultipleYAxes():
         right_spine_taken = False
         for plot_num in range(1, len(plot_vars)): #Don't want to touch first variable
             
-
             if visible_axes[plot_num] == 1:
                 if not right_spine_taken: # We're adding the first right-sided axis, don't need to do anything
                     right_spine_taken = True
@@ -598,10 +610,206 @@ class SinglePlotsWithMultipleYAxes():
         plt.title("Distribution of Multiple Variables at t = " \
                                                     + formatted_title_time + r'$\mu$' + "s")
         filename = "Sim " + str(sim_number) + " plot " + str(plot_number) + \
-            " multiple y axes distributions at t = " + formatted_file_name_time + ".jpg"
+            " multiple y axes spatial distributions at t = " + formatted_file_name_time + ".jpg"
         
         mng = plt.get_current_fig_manager()
         mng.full_screen_toggle()
         current_dir = os.getcwd()
         plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
         plt.close()
+
+class SingleTemporalPlotsWithMultipleYAxes():
+    def __init__(self, data_file, plot_vars, visible_axes, plot_number) -> None:
+        cell_data = FormCellDataFromFile(data_file_name = data_file)
+        sim_number = cell_data.sim_number
+        
+
+        fig, ax = plt.subplots(figsize=(15, 5))
+        axes = [ax] + [ax.twinx() for i in range(len(visible_axes) - 1)]
+
+        # Make some space on the right side for the extra y-axis.
+        num_active_axes = 0
+        for i in visible_axes:
+            num_active_axes += i
+            
+        fig.subplots_adjust(right=0.9 - 0.05 * (num_active_axes - 1))
+
+        # Move the last y-axis spine over to the right by 20% of the width of the axes
+        # To make the border of the right-most axis visible, we need to turn the frame
+        # on. This hides the other plots, however, so we need to turn its fill off.
+        new_axes_location = 1.0
+        right_spine_taken = False
+        for plot_num in range(1, len(plot_vars)): #Don't want to touch first variable
+            
+
+            if visible_axes[plot_num] == 1:
+                if not right_spine_taken: # We're adding the first right-sided axis, don't need to do anything
+                    right_spine_taken = True
+                else: # Need to offset axes 
+                    new_axes_location += 0.1
+                    axes[plot_num].spines['right'].set_position(('axes', new_axes_location))
+                    axes[plot_num].set_frame_on(True)
+                    axes[plot_num].patch.set_visible(False)
+
+            else:
+                axes[plot_num].spines['right'].set_visible(False)
+                axes[plot_num].get_yaxis().set_visible(False)
+
+        plot_list = []
+        marker_list = [".", "x", "+", "*", "|", "_", "^", "s", "o"]
+        marker_location = 0
+        for ind1, var_list in enumerate(plot_vars):
+            if var_list == ["massf"]: # Plot all mass fractions on the one axis
+                column_names = list(cell_data.cell_data.columns)
+                massf_species_names = [species for species in cell_data.cell_data \
+                                                if len(species) > 5 and species[:5] == "massf"]
+                species_names = [species.split("_")[1] for species in massf_species_names]
+                for index, species in enumerate(species_names):
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species)
+                    for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[massf_species_names[index]], \
+                                marker = marker_list[marker_location], label = r"$f_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    marker_location += 1
+                    axes[ind1].set_ylabel(SYMBOLS[var_list[0]] + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+            
+            elif len(var_list[0]) > 5 and var_list[0][:5] == "massf": # Plot groups of mass fractions on one axis
+                massf_label_list = []
+                for var in var_list:
+                    species_name = var[6:] # Trim off starting massf_
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                    for ind, val in enumerate(split_name):
+                            if val.isnumeric():
+                                split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    SI_UNITS[var] = r'$-$'
+                    SYMBOLS[var] = r"$f_{" + formatted_species_name + r'}$'
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[var], marker = marker_list[marker_location], \
+                                label = r"$f_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    massf_label_list.append(SYMBOLS[var])
+                    marker_location += 1
+                axes[ind1].set_ylabel(', '.join(massf_label_list) + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+            
+            elif var_list == ["molef"]: # Plot all mole fractions on the one axis
+                column_names = list(cell_data.cell_data.columns)
+                molef_species_names = [species for species in column_names \
+                                                if len(species) > 5 and species[:5] == "molef"]
+                species_names = [species.split("_")[1] for species in molef_species_names] 
+                for index, species in enumerate(species_names):
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species)
+                    for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[molef_species_names[index]], \
+                                marker = marker_list[marker_location], label = r"$f_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    marker_location += 1
+                    axes[ind1].set_ylabel(SYMBOLS[var_list[0]] + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+
+            elif len(var_list[0]) > 5 and var_list[0][:5] == "molef": # Plot groups of mole fractions on one axis
+                molef_label_list = []
+                for var in var_list:
+                    species_name = var[6:] # Trim off starting massf_
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                    for ind, val in enumerate(split_name):
+                            if val.isnumeric():
+                                split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    SI_UNITS[var] = r'$-$'
+                    SYMBOLS[var] = r"$\chi_{" + formatted_species_name + r'}$'
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[var], marker = marker_list[marker_location], \
+                                label = r"$\chi_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    molef_label_list.append(SYMBOLS[var])
+                    marker_location += 1
+                axes[ind1].set_ylabel(', '.join(molef_label_list) + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+
+            elif var_list == ["conc"]:
+                column_names = list(cell_data.cell_data.columns)
+                conc_species_names = [species for species in column_names \
+                                                if len(species) > 4 and species[:4] == "conc"]
+                
+                species_names = [species.split("_")[1] for species in conc_species_names] 
+                for index, species in enumerate(species_names):
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species)
+                    for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[conc_species_names[index]], \
+                                marker = marker_list[marker_location], label = r"$f_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    marker_location += 1
+                    axes[ind1].set_ylabel(SYMBOLS[var_list[0]] + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+            
+            elif len(var_list[0]) > 4 and var_list[0][:4] == "conc": # Plot groups of concentrations on one axis
+                conc_label_list = []
+                for var in var_list:
+                    species_name = var[5:] # Trim off starting conc_
+                    split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                    for ind, val in enumerate(split_name):
+                            if val.isnumeric():
+                                split_name[ind] = "_{" + split_name[ind] + "}"
+                    formatted_species_name = ''.join(split_name)
+                    SI_UNITS[var] = r'$moleL^{-1}$'
+                    SYMBOLS[var] = r"$C_{" + formatted_species_name + r'}$'
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                                cell_data.cell_data[var], marker = marker_list[marker_location], \
+                                label = r"$C_{" + formatted_species_name + "}$")
+                    plot_list.append(p_ind)
+                    conc_label_list.append(SYMBOLS[var])
+                    marker_location += 1
+                axes[ind1].set_ylabel(', '.join(conc_label_list) + " (" + SI_UNITS[var_list[0]] +")", \
+                                ha = "right")
+
+
+
+
+
+
+
+
+            else:
+                var_names = []
+                for var in var_list:
+                    var_names.append(var)
+                    p_ind = axes[ind1].scatter(cell_data.cell_data["time"] * 1e3, \
+                            cell_data.cell_data[var], \
+                            label = SYMBOLS[var], marker = marker_list[marker_location])
+                    marker_location += 1
+                    if visible_axes[ind1] == 1:
+                        plot_list.append(p_ind)
+                if visible_axes[ind1] == 1:
+                    axes[ind1].set_ylabel(', '.join([SYMBOLS[var] for var in var_names])     + " (" + SI_UNITS[var_names[0]] +")", \
+                                ha = "right")
+                    
+        ax.legend(loc = 'upper center', bbox_to_anchor = (0.5, -0.12), handles = plot_list, ncol = len(plot_list))
+        
+        axes[0].set_xlabel("time (ms)")
+        axes[0].grid(visible = True, axis = 'y', which = "both")
+        axes[0].minorticks_on()
+        plt.title("Transient Development of Various Quantities at Cell " + str(cell_data.cell_id))
+        filename = "Sim " + str(sim_number) + " plot " + str(plot_number) + \
+            " multiple y axes transient development of various properties.jpg"
+        
+        mng = plt.get_current_fig_manager()
+        mng.full_screen_toggle()
+        current_dir = os.getcwd()
+        plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
+        plt.close()
+                    

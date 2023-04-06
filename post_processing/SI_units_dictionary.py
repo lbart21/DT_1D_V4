@@ -169,6 +169,8 @@ SI_UNITS = {
 
     "molef"                     : r'$-$',
 
+    "conc"                      : r'$moleL^{-1}$',
+
     "D"                         : r'$m$',
     "R"                         : r'$m$'
 }

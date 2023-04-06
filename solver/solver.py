@@ -47,6 +47,7 @@ class Solver():
             current_mesh_object = new_data.mesh
             current_step += 1
             if current_step % rapid_data_save_steps == 0:
+                #print("Writing Cell and Interface data, t=", t_current)
                 for cell_id in new_data.mesh.cell_idx_to_track:
                     write_cell_data_to_file(cell = new_data.mesh.cell_array[cell_id], time = t_current, sim_number = sim_number, \
                                         flow_property_variables = transient_cell_flow_property_variables_to_write)
