@@ -1,7 +1,7 @@
 species = {[0]='O', [1]='O2', [2]='N2', [3]='H', [4]='H2', [5]='H2O', [6]='HO2', [7]='OH', [8]='H2O2', }
 config = {
   tempLimits = {lower=300.000000, upper=50000.000000},
-  odeStep = {method='alpha-qss', eps1= 1.000000e-04, eps2= 5.000000e-05, delta= 1.000000e-10, maxIters=10},
+  odeStep = {method='alpha-qss', eps1= 1.000000e-03, eps2= 5.000000e-04, delta= 1.000000e-10, maxIters=10},
   tightTempCoupling = true,
   maxSubcycles = 10000,
   maxAttempts = 4
