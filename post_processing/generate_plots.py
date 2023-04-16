@@ -812,4 +812,15 @@ class SingleTemporalPlotsWithMultipleYAxes():
         current_dir = os.getcwd()
         plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
         plt.close()
-                    
+
+class GenerateCustomSpatialPlotsFromMultipleSims():
+    def __init__(self) -> None:
+        pass
+
+class GenerateCustomCellTemporalPlotsFromMultipleSims():
+    def __init__(self) -> None:
+        pass
+
+class GenerateCustomInterfaceTemporalPlotsFromMultipleSims():
+    def __init__(self) -> None:
+        pass      

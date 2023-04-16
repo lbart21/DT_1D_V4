@@ -9,6 +9,11 @@
 --   
 C_factor = 4184.0 / 8.3145
 
+Config{
+   odeStep = {method='alpha-qss', eps1=0.001}, --default eps1=0.001
+   tightTempCoupling = true
+}
+
 Reaction{
     'H + O2 <=> O + OH',
     fr={'Arrhenius', A=3.55e15,  n=-0.41, C=16.6*C_factor}

@@ -4,7 +4,7 @@ Author: Luke Bartholomew
 Edits:
 """
 import os
-def write_interface_data_to_file(interface, time, flow_property_variables, sim_number):
+def write_interface_data_to_file(interface, time, flow_property_variables, sim_number, simulation_description):
     cwd = os.getcwd()
     interface_id = interface.interface_id
     file_name = "Sim" + str(sim_number) + "DataAtInterfaceID" + str(interface_id) + ".txt"
@@ -31,6 +31,7 @@ def write_interface_data_to_file(interface, time, flow_property_variables, sim_n
             variable_names = list(interface_data.keys()) #Does not include time
             file.write("Sim: " + str(sim_number) + "\n")
             file.write("ID: " + str(interface_id) + "\n")
+            file.write("Description: " + simulation_description + "\n")
             file.write("Variables: " + str(len(variable_names) + 1) + "\n")
             file.write("time " + " ".join(variable_names) + "\n")
             file.write(str(format(time, ".9f")) + " ")

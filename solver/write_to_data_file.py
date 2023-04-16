@@ -5,7 +5,7 @@ Edits:
 """
 import os
 
-def write_to_data_file(cell_array, time, labels, flow_property_variables, sim_number) -> None:
+def write_to_data_file(cell_array, time, labels, flow_property_variables, sim_number, simulation_description) -> None:
     cwd = os.getcwd()
     for comp_label in labels:
         file_name = "Sim" + str(sim_number) + "DataAt" + str(format(time, ".9f")) +"ForComponent" + comp_label + ".txt"
@@ -13,6 +13,7 @@ def write_to_data_file(cell_array, time, labels, flow_property_variables, sim_nu
         file.write("Sim: " + str(sim_number) + "\n")
         file.write("Label: " + comp_label + "\n")
         file.write("Time: " + str(time) + "\n")
+        file.write("Description: " + simulation_description + "\n")
         n_cells = len(cell_array)
         first_cell_in_component = True
         for cell_idx in range(n_cells):

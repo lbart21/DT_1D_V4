@@ -4,7 +4,7 @@ Author: Luke Bartholomew
 Edits:
 """
 import os
-def write_cell_data_to_file(cell, time, flow_property_variables, sim_number):
+def write_cell_data_to_file(cell, time, flow_property_variables, sim_number, simulation_description):
     cwd = os.getcwd()
     cell_id = cell.cell_id
     file_name = "Sim" + str(sim_number) + "DataAtCellID" + str(cell_id) + ".txt"
@@ -66,6 +66,7 @@ def write_cell_data_to_file(cell, time, flow_property_variables, sim_number):
             variable_names = list(cell_flow_data.keys()) #Does not include time
             file.write("Sim: " + str(sim_number) + "\n")
             file.write("ID: " + str(cell_id) + "\n")
+            file.write("Description: " + simulation_description + "\n")
             file.write("Variables: " + str(len(variable_names) + 1) + "\n")
             file.write("time " + " ".join(variable_names) + "\n")
             file.write(str(format(time, ".9f")) + " ")
