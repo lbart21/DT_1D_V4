@@ -777,13 +777,6 @@ class SingleTemporalPlotsWithMultipleYAxes():
                 axes[ind1].set_ylabel(', '.join(conc_label_list) + " (" + SI_UNITS[var_list[0]] +")", \
                                 ha = "right")
 
-
-
-
-
-
-
-
             else:
                 var_names = []
                 for var in var_list:
@@ -814,13 +807,137 @@ class SingleTemporalPlotsWithMultipleYAxes():
         plt.close()
 
 class GenerateCustomSpatialPlotsFromMultipleSims():
-    def __init__(self) -> None:
-        pass
+    def __init__(self, spatial_data_files, custom_labels, plot_vars, convergence_parameter) -> None:
+        data_from_files = [None] * len(spatial_data_files)
+
+        for ind, file in enumerate(spatial_data_files):
+            data = GenerateDataObject(data_file_name = file)
+            data_from_files[ind] = data.component_data
+            
+        for var in plot_vars:
+            fig = plt.figure(figsize=(15, 5))
+
+            if len(var) > 5 and var[:5] == "massf":
+                species_name = var[6:] # Trim off starting massf_
+                split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                formatted_species_name = ''.join(split_name)
+                SI_UNITS[var] = r'$-$'
+                SYMBOLS[var] = r"$" + formatted_species_name + "$" + ' ' + r'$Mass$' + ' ' + r'$Fraction$'
+
+            elif len(var) > 5 and var[:5] == "molef":
+                species_name = var[6:] # Trim off starting molef_
+                split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                formatted_species_name = ''.join(split_name)
+                SI_UNITS[var] = r'$-$'
+                SYMBOLS[var] = r"$" + formatted_species_name + "$" + ' ' + r'$Mole$' + ' ' + r'$Fraction$'
+
+            for ind, data in enumerate(data_from_files):
+                plt.scatter(data["pos_x"], data[var], \
+                                label = custom_labels[ind], \
+                                marker = ".")
+            
+            plt.title("Spatial convergence of " + SYMBOLS[var] + " against " + convergence_parameter)
+            plt.ylabel(SYMBOLS[var] + " (" + SI_UNITS[var] +")", \
+                        rotation = "horizontal", ha = "right")
+            plt.xlabel("Position (m)")
+            plt.legend()
+            plt.grid()
+            filename = "Spatial convergence of " + var + " against " + convergence_parameter + ".jpg"
+            mng = plt.get_current_fig_manager()
+            mng.full_screen_toggle()
+            current_dir = os.getcwd()
+            plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
+            plt.close()
+        
 
 class GenerateCustomCellTemporalPlotsFromMultipleSims():
-    def __init__(self) -> None:
-        pass
+    def __init__(self, cell_data_files, custom_labels, plot_vars, convergence_parameter) -> None:
+        data_from_files = [None] * len(cell_data_files)
+
+        for ind, file in enumerate(cell_data_files):
+            data = FormCellDataFromFile(data_file_name = file)
+            data_from_files[ind] = data
+        
+        for var in plot_vars:
+            fig = plt.figure(figsize=(15, 5))
+
+            if len(var) > 5 and var[:5] == "massf":
+                species_name = var[6:] # Trim off starting massf_
+                split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                formatted_species_name = ''.join(split_name)
+                SI_UNITS[var] = r'$-$'
+                SYMBOLS[var] = r"$" + formatted_species_name + "$" + ' ' + r'$Mass$' + ' ' + r'$Fraction$'
+
+            elif len(var) > 5 and var[:5] == "molef":
+                species_name = var[6:] # Trim off starting molef_
+                split_name = re.findall('(\d+|[A-Za-z]+)', species_name)
+                for ind, val in enumerate(split_name):
+                        if val.isnumeric():
+                            split_name[ind] = "_{" + split_name[ind] + "}"
+                formatted_species_name = ''.join(split_name)
+                SI_UNITS[var] = r'$-$'
+                SYMBOLS[var] = r"$" + formatted_species_name + "$" + ' ' + r'$Mole$' + ' ' + r'$Fraction$'
+
+            for ind, data in enumerate(data_from_files):
+                plt.scatter(data.cell_data["time"], data.cell_data[var], \
+                                label = custom_labels[ind], \
+                                marker = ".")
+            
+            plt.title("Temporal convergence of " + SYMBOLS[var] + " against " + convergence_parameter)
+            plt.ylabel(SYMBOLS[var] + " (" + SI_UNITS[var] +")", \
+                        rotation = "horizontal", ha = "right")
+            plt.xlabel("Position (m)")
+            plt.legend()
+            plt.grid()
+            filename = "Temporal convergence of " + var + " against " + convergence_parameter + " at Cell" + str(data.cell_id) + ".jpg"
+            mng = plt.get_current_fig_manager()
+            mng.full_screen_toggle()
+            current_dir = os.getcwd()
+            plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
+            plt.close()
+
 
 class GenerateCustomInterfaceTemporalPlotsFromMultipleSims():
-    def __init__(self) -> None:
-        pass      
+    def __init__(self, interface_data_files, custom_labels, plot_vars, convergence_parameter) -> None:
+        data_from_files = [None] * len(interface_data_files)
+
+        for ind, file in enumerate(interface_data_files):
+            data = FormInterfaceDataFromFile(data_file_name = file)
+            data_from_files[ind] = data
+        
+        for var in plot_vars:
+            fig = plt.figure(figsize=(15, 5))
+            
+            if var == "mass_flux":
+                for data in data_from_files:
+                    data.interface_data["mass_flux"] *= data.interface_data["A"]
+            if var == "energy_flux":
+                for data in data_from_files:
+                    data.interface_data["energy_flux"] *= data.interface_data["A"]
+
+            for ind, data in enumerate(data_from_files):
+                plt.scatter(data.interface_data["time"], data.interface_data[var], \
+                                label = custom_labels[ind], \
+                                marker = ".")
+            
+            plt.title("Temporal convergence of " + SYMBOLS[var] + " against " + convergence_parameter)
+            plt.ylabel(SYMBOLS[var] + " (" + SI_UNITS[var] +")", \
+                        rotation = "horizontal", ha = "right")
+            plt.xlabel("Position (m)")
+            plt.legend()
+            plt.grid()
+            filename = "Temporal convergence of " + var + " against " + convergence_parameter + " at Interface" + str(data.interface_id) + ".jpg"
+            mng = plt.get_current_fig_manager()
+            mng.full_screen_toggle()
+            current_dir = os.getcwd()
+            plt.savefig(current_dir + "/plots/" + filename, bbox_inches="tight")
+            plt.close()
