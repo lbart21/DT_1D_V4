@@ -5,11 +5,11 @@ Edits:
 """
 import sys
 
-from Algorithms.DT_1D_V4.models.cell_methods.single_phase_single_species_decoding \
-        import single_species_decode_to_primative_properties
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_decoding \
+        import multi_species_decode_to_primative_properties
 
-from Algorithms.DT_1D_V4.models.cell_methods.single_phase_single_species_encode_cqs \
-        import encode_single_species_cqs
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_encode_cqs \
+        import encode_multi_species_cqs
 class SinglePhaseMultiSpeciesNonReactivePipeCell():
     def __init__(self, cell_id, label) -> None:
         self.geo = {}
@@ -22,7 +22,8 @@ class SinglePhaseMultiSpeciesNonReactivePipeCell():
         self.cqs = {
             "mass"      : 0.0,
             "xMom"      : 0.0,
-            "energy"    : 0.0
+            "energy"    : 0.0,
+            "spcs_mass" : []
         }
 
         self.flow_state = None
@@ -35,11 +36,12 @@ class SinglePhaseMultiSpeciesNonReactivePipeCell():
             #print("Cell ID:", self.cell_id, "pos_x:", self.geo["pos_x"])
             #print("cqs:", self.cqs)
 
-            rho, u, vel_x = single_species_decode_to_primative_properties(cqs = self.cqs)
+            rho, u, massf, vel_x = multi_species_decode_to_primative_properties(cqs = self.cqs)
 
             self.flow_state.vel_x = vel_x
             self.flow_state.fluid_state.rho = rho
             self.flow_state.fluid_state.u = u
+            self.flow_state.fluid_state.massf = massf
 
             try:
                 self.flow_state.fluid_state.update_thermo_from_rhou()
@@ -52,7 +54,7 @@ class SinglePhaseMultiSpeciesNonReactivePipeCell():
                 sys.exit(1)
     
     def initialise_conserved_quantities(self):
-        self.cqs = encode_single_species_cqs(flow_state = self.flow_state)
+        self.cqs = encode_multi_species_cqs(flow_state = self.flow_state)
 
     def max_allowable_dt(self, cfl):
         return cfl * self.geo["dx"] / (abs(self.flow_state.vel_x) + self.flow_state.fluid_state.a)

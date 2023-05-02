@@ -10,7 +10,7 @@ from Algorithms.DT_1D_V4.models.interface_models.single_phase_uniform_massf_inte
                 import SinglePhaseUniformMassfInterface
 
 import numpy as np
-class InletBlockToMimicMultiInletFlow(SingleInlet1DMeshObject):
+class SingleSpeciesInletBlockToMimicMultiInletFlow(SingleInlet1DMeshObject):
     def __init__(self, inlet_flow_state, init_flow_state, geometry, inlet_area, comp_label, \
                         recon_scheme, limiter, recon_props, update_from, flux_scheme) -> None:
         super().__init__(n_cells = 1, reverse_direction_for_ghost_cells = False)

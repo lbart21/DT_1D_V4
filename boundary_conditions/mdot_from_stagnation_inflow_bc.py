@@ -72,7 +72,6 @@ def mdot_from_stagnation_inflow_bc(mesh, BC, on_west_boundary_bool):
     static_enthalpy = stagnation_enthalpy - 0.5 * bulk_speed ** 2.0
 
     fs.vel_x = bulk_speed
-    fs.fluid_state.enthalpy = static_enthalpy
     fs.fluid_state.update_thermo_from_hs(h = static_enthalpy, s = stagnation_entropy)
     
     #flow_state_interior.vel_x = bulk_speed
