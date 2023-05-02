@@ -63,7 +63,7 @@ def write_interface_data_to_file(interface, time, flow_property_variables, sim_n
 
             file.write(str(format(time, ".9f")) + " ")
             for name in variable_names:
-                file.write(str(format(variable_names[name], ".9f")) + " ")
+                file.write(str(format(interface_data[name], ".9f")) + " ")
             file.write("\n")
     file.close()
 

@@ -4,14 +4,15 @@ Author: Luke Bartholomew
 Edits:
 """
 
+import numpy as np
+
 from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_decoding \
         import multi_species_decode_to_primative_properties
 
 from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_encode_cqs \
         import encode_multi_species_cqs
 
-import numpy as np
-class SinglePhaseMultiSpeciesFiniteRateReactivePipeCell():
+class SinglePhaseMultiSpeciesFiniteRateReactiveQuadraticNozzleCell():
     def __init__(self, cell_id, label) -> None:
         self.geo = {}
         self.flow_state = None
@@ -32,7 +33,7 @@ class SinglePhaseMultiSpeciesFiniteRateReactivePipeCell():
     
     def fill_geometry(self, geometry):
         self.geo = geometry
-    
+
     def decode_to_primative_properties(self):
         if self.interior_cell_flag:
             rho, u, massf, vel_x = multi_species_decode_to_primative_properties(cqs = self.cqs)
@@ -43,8 +44,7 @@ class SinglePhaseMultiSpeciesFiniteRateReactivePipeCell():
             self.flow_state.vel_x = vel_x
 
             self.flow_state.fluid_state.update_thermo_from_rhou()
-            
-        
+    
     def initialise_conserved_quantities(self):
         self.cqs = encode_multi_species_cqs(flow_state = self.flow_state)
 
@@ -53,22 +53,12 @@ class SinglePhaseMultiSpeciesFiniteRateReactivePipeCell():
 
     def complete_cell_methods(self, **kwargs):
         if self.interior_cell_flag:
-            print("Species mass at start of cell method:", self.cqs["spcs_mass"])
-            print("Mass fractions at start of cell method:", self.flow_state.fluid_state.massf)
             dt_inv = kwargs["dt_inv"]
-            
-            #print("Printing fluid state props before reactor time stepping")
-            #print("rho: ", self.flow_state.fluid_state.rho, "p: ", self.flow_state.fluid_state.p, \
-                    #"T: ", self.flow_state.fluid_state.T, "massf: ", self.flow_state.fluid_state.massf)
+
             self.dt_suggest = self.reactor_model.update_state(gstate = self.flow_state.fluid_state, \
                                                                 t_interval = dt_inv, dt_suggest = self.dt_suggest)
-            #print("massf:", self.flow_state.fluid_state.massf)
-            #print("Printing fluid state props after reactor time stepping")
-            #print("rho: ", self.flow_state.fluid_state.rho, "p: ", self.flow_state.fluid_state.p, \
-                    #"T: ", self.flow_state.fluid_state.T, "massf: ", self.flow_state.fluid_state.massf)
+            
             self.reinitialise_massf_conserved_quantity()
-            print("Species mass at end of cell method:", self.cqs["spcs_mass"])
-            print("Mass fractions at end of cell method:", self.flow_state.fluid_state.massf)
         
     def decode_to_primative_properties_after_interface_methods(self):
         self.decode_to_primative_properties()

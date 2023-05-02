@@ -4,8 +4,8 @@ Author: Luke Bartholomew
 Edits:
 """
 from Algorithms.DT_1D_V4.models.prefilled_single_inlet_mesh_object import SingleInlet1DMeshObject
-from Algorithms.DT_1D_V4.models.inlet_block_to_mimic_multi_inlet_flow.inlet_cell_to_mimic_multi_inlet_flow \
-                import CellToMimicMultiInletFlow
+from Algorithms.DT_1D_V4.models.single_species_inlet_block_to_mimic_multi_inlet_flow.single_species_inlet_cell_to_mimic_multi_inlet_flow \
+                import SingleSpeciesCellToMimicMultiInletFlow
 from Algorithms.DT_1D_V4.models.interface_models.single_phase_uniform_massf_interface \
                 import SinglePhaseUniformMassfInterface
 
@@ -24,7 +24,8 @@ class InletBlockToMimicMultiInletFlow(SingleInlet1DMeshObject):
                             flux_scheme = flux_scheme, geometry = geometry, init_flow_state = init_flow_state)
 
     def initialise_cell(self, comp_label, inlet_flow_state, init_flow_state, geometry, inlet_area):
-        cell = CellToMimicMultiInletFlow(cell_id = 0, label = comp_label, source_fs = inlet_flow_state, source_area = inlet_area)
+        cell = SingleSpeciesCellToMimicMultiInletFlow(cell_id = 0, label = comp_label, \
+                                            source_fs = inlet_flow_state, source_area = inlet_area)
         [D, L] = geometry
         geo = {
                 "dx"    :   L,

@@ -34,7 +34,5 @@ class GenerateDataObject():
                 for ind, name in enumerate(variable_names):
                     self.component_data[name][row_ind - data_start_ind] = float(row.split(' ')[ind])
         file.close()
-        self.component_data.sort_values(by = ["pos_x"])
+        self.component_data = self.component_data.sort_values(by = ["pos_x"])
         
-        
-

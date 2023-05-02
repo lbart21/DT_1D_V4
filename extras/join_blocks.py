@@ -96,13 +96,28 @@ class JointBlock(EmptyMeshObject):
             mesh_object_1.boundary_interface_ids.remove(block_1_interface_id_being_replaced)
             mesh_object_2.boundary_interface_ids.remove(block_2_interface_id_being_replaced)
 
-            self.boundary_interface_ids = mesh_object_1.boundary_interface_ids + [i + ninterfaces_mesh_1 - 1 for i in mesh_object_2.boundary_interface_ids]
+            #print("Interfaces in mesh 1:", ninterfaces_mesh_1)
+
+            for ind, val in enumerate(mesh_object_2.boundary_interface_ids):
+                if val > block_2_interface_id_being_replaced:
+                    mesh_object_2.boundary_interface_ids[ind] += ninterfaces_mesh_1 - 1
+                else:
+                    mesh_object_2.boundary_interface_ids[ind] += ninterfaces_mesh_1
+
+            self.boundary_interface_ids = mesh_object_1.boundary_interface_ids + mesh_object_2.boundary_interface_ids
 
             print("New mesh boundary interface indices are: ", self.boundary_interface_ids)
+            #print("Mesh 2 boundary condition indices:", [i[0] for i in mesh_object_2.boundary_conditions])
+
+            for ind, bc in enumerate(mesh_object_2.boundary_conditions):
+                if bc[0] > block_2_interface_id_being_replaced:
+                    mesh_object_2.boundary_conditions[ind] = [bc[0] + ninterfaces_mesh_1 - 1] + bc[1::]
+                else:
+                    mesh_object_2.boundary_conditions[ind] = [bc[0] + ninterfaces_mesh_1] + bc[1::]
             
-            mesh_object_2.boundary_conditions = [[i[0] + ninterfaces_mesh_1 - 1] + i[1::] for i in mesh_object_2.boundary_conditions]
 
             self.boundary_conditions = mesh_object_1.boundary_conditions + mesh_object_2.boundary_conditions
+            #print("New boundary condition indices:", [i[0] for i in self.boundary_conditions])
 
             self.cell_idx_to_track = mesh_object_1.cell_idx_to_track + [i + ncells_mesh_1 for i in mesh_object_2.cell_idx_to_track]
             self.interface_idx_to_track = mesh_object_1.interface_idx_to_track + [j + ninterfaces_mesh_1 - 1 for j in mesh_object_2.interface_idx_to_track]

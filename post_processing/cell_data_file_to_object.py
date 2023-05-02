@@ -33,4 +33,4 @@ class FormCellDataFromFile():
                 for ind, name in enumerate(variable_names):
                     self.cell_data[name][row_ind - data_start_ind] = float(row.split(' ')[ind])
         file.close()
-        self.cell_data.sort_values(by = ["time"])
+        self.cell_data = self.cell_data.sort_values(by = ["time"])

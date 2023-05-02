@@ -3,7 +3,14 @@ Function:
 Author: Luke Bartholomew
 Edits: 
 """
+
 import numpy as np
+
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_decoding \
+        import multi_species_decode_to_primative_properties
+
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_multi_species_encode_cqs \
+        import encode_multi_species_cqs
 class SinglePhaseMultiSpeciesNonReactiveMixingEllipticNozzleCell():
     def __init__(self, cell_id, label) -> None:
         self.geo = {}
@@ -30,37 +37,18 @@ class SinglePhaseMultiSpeciesNonReactiveMixingEllipticNozzleCell():
 
     def decode_to_primative_properties(self):
         if self.interior_cell_flag:
-            rho = sum(self.cqs["spcs_mass"])
-            rho_tol = 1e-6
-            if abs(rho - self.cqs["mass"]) > rho_tol:
-                #print("Too large of an error between conserved quantity mass and sum of species mass")
-                #print("Cell: ", self.cell_id, "Error: ", abs(rho - self.cqs["mass"]))
-                self.cqs["spcs_mass"] = (np.array(self.cqs["spcs_mass"]) * self.cqs["mass"] / rho).tolist()
+            rho, u, massf, vel_x = multi_species_decode_to_primative_properties(cqs = self.cqs)
 
-            massf = (np.array(self.cqs["spcs_mass"]) / self.cqs["mass"]).tolist()
-            massf = (np.array(massf) / sum(massf)).tolist()
-            
+            self.flow_state.fluid_state.rho = rho
+            self.flow_state.fluid_state.u = u
             self.flow_state.fluid_state.massf = massf
-            
-            self.flow_state.fluid_state.rho = self.cqs["mass"]
-            vel_x = self.cqs["xMom"] / self.cqs["mass"]
+
             self.flow_state.vel_x = vel_x
-            self.flow_state.fluid_state.u = self.cqs["energy"] / self.cqs["mass"] - 0.5 * vel_x ** 2.0
-            #print("Printing fluid state props before prop update, after decoding")
-            #print("rho: ", self.flow_state.fluid_state.rho, "p: ", self.flow_state.fluid_state.p, \
-                        #"T: ", self.flow_state.fluid_state.T, "massf: ", self.flow_state.fluid_state.massf)
+
             self.flow_state.fluid_state.update_thermo_from_rhou()
-            #print("Printing fluid state props after prop update, after decoding")
-            #print("rho: ", self.flow_state.fluid_state.rho, "p: ", self.flow_state.fluid_state.p, \
-                        #"T: ", self.flow_state.fluid_state.T, "massf: ", self.flow_state.fluid_state.massf)
-            self.flow_state.fluid_state.update_sound_speed()
     
     def initialise_conserved_quantities(self):
-        self.cqs["mass"] = self.flow_state.fluid_state.rho
-        self.cqs["xMom"] = self.flow_state.fluid_state.rho * self.flow_state.vel_x
-        self.cqs["energy"] = self.flow_state.fluid_state.rho * \
-                                                    (self.flow_state.fluid_state.u + 0.5 * self.flow_state.vel_x ** 2)
-        self.cqs["spcs_mass"] = (self.flow_state.fluid_state.rho * np.array(self.flow_state.fluid_state.massf)).tolist()
+        self.cqs = encode_multi_species_cqs(flow_state = self.flow_state)
     
     def max_allowable_dt(self, cfl):
         return cfl * self.geo["dx"] / (abs(self.flow_state.vel_x) + self.flow_state.fluid_state.a)

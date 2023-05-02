@@ -3,7 +3,14 @@ Function:
 Author: Luke Bartholomew
 Edits:
 """
-class CellToMimicMultiInletFlow():
+
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_single_species_decoding \
+        import single_species_decode_to_primative_properties
+
+from Algorithms.DT_1D_V4.models.cell_methods.single_phase_single_species_encode_cqs \
+        import encode_single_species_cqs
+
+class SingleSpeciesCellToMimicMultiInletFlow():
     def __init__(self, cell_id, label, source_fs, source_area) -> None:
         self.geo = {}
         self.flow_state = None
@@ -27,21 +34,16 @@ class CellToMimicMultiInletFlow():
         self.geo = geometry
     
     def decode_to_primative_properties(self):
-        new_density = self.cqs["mass"] 
-        new_vel_x = self.cqs["xMom"] / self.cqs["mass"]
-        new_u = self.cqs["energy"] / self.cqs["mass"] \
-                                                        - 0.5 * new_vel_x ** 2.0
-        self.flow_state.vel_x = new_vel_x
-        self.flow_state.fluid_state.rho = new_density
-        self.flow_state.fluid_state.u = new_u
-        self.flow_state.fluid_state.update_thermo_from_rhou()
-        self.flow_state.fluid_state.update_sound_speed()
+        if self.interior_cell_flag:
+            rho, u, vel_x = single_species_decode_to_primative_properties(cqs = self.cqs)
+            
+            self.flow_state.vel_x = vel_x
+            self.flow_state.fluid_state.rho = rho
+            self.flow_state.fluid_state.u = u
+            self.flow_state.fluid_state.update_thermo_from_rhou()
     
     def initialise_conserved_quantities(self):
-        self.cqs["mass"] = self.flow_state.fluid_state.rho
-        self.cqs["xMom"] = self.flow_state.fluid_state.rho * self.flow_state.vel_x
-        self.cqs["energy"] = self.flow_state.fluid_state.rho * \
-                                                    (self.flow_state.fluid_state.u + 0.5 * self.flow_state.vel_x ** 2)
+        self.cqs = encode_single_species_cqs(flow_state = self.flow_state)
         
     def max_allowable_dt(self, cfl):
         return cfl * self.geo["dx"] / (abs(self.flow_state.vel_x) + self.flow_state.fluid_state.a)

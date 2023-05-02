@@ -32,4 +32,4 @@ class FormInterfaceDataFromFile():
                 for ind, name in enumerate(variable_names):
                     self.interface_data[name][row_ind - data_start_ind] = float(row.split(' ')[ind])
         file.close()
-        self.interface_data.sort_values(by = ["time"])
+        self.interface_data = self.interface_data.sort_values(by = ["time"])
