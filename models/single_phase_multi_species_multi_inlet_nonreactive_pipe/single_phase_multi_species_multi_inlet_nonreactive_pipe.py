@@ -86,16 +86,13 @@ class SinglePhaseMultiSpeciesMultiInletNonReactivePipe(MultiInlet1DMeshObject):
             fs_lft = flow_state_object(gs_lft)
             fs_rght = flow_state_object(gs_rght)
             if reverse_direction: #Inlets are on the east boundary
-                nL = n_cells
-                nR = 0
                 interface_id = n_cells + inlet_ind
+                
             else:
-                nL = 0
-                nR = n_cells
                 interface_id = inlet_ind
+
             interface_object = SinglePhaseUniformMassfConstantAreaInterface(\
-                                    interface_id = interface_id, nL = nL, \
-                                    nR = nR, \
+                                    interface_id = interface_id, \
                                     flux_scheme = flux_scheme, \
                                     recon_scheme = recon_scheme, \
                                     limiter = limiter, \
@@ -119,16 +116,12 @@ class SinglePhaseMultiSpeciesMultiInletNonReactivePipe(MultiInlet1DMeshObject):
             fs_lft = flow_state_object(gs_lft)
             fs_rght = flow_state_object(gs_rght)
             if reverse_direction: #Inlets are on the east boundary
-                nL = interface
-                nR = n_cells - interface
                 interface_id = interface
             else:
-                nL = 1 + interface
-                nR = n_cells - 1 - interface
                 interface_id = len(inlet_areas) + interface
+
             interface_object = SinglePhaseUniformMassfConstantAreaInterface(\
-                                    interface_id = interface_id, nL = nL, \
-                                    nR = nR, \
+                                    interface_id = interface_id, \
                                     flux_scheme = flux_scheme, \
                                     recon_scheme = recon_scheme, \
                                     limiter = limiter, \

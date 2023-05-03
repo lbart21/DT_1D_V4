@@ -42,7 +42,7 @@ class SingleSpeciesInletBlockToMimicMultiInletFlow(SingleInlet1DMeshObject):
     def initialise_interfaces(self, recon_scheme, limiter, recon_props, update_from, flux_scheme, geometry, init_flow_state):
         [D, _] = geometry
         for i in range(2):
-            interface = SinglePhaseUniformMassfInterface(interface_id = i, nL = i, nR = 1 - i, \
+            interface = SinglePhaseUniformMassfInterface(interface_id = i, \
                                         recon_scheme = recon_scheme, limiter = limiter, \
                                         recon_props = recon_props, \
                                         update_from = update_from, flux_scheme = flux_scheme)

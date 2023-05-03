@@ -10,10 +10,8 @@ from Algorithms.DT_1D_V4.reconstruction.reconstruction_hierarchy \
                     import LEFT_RECONSTRUCTION_HIERARCHY, RIGHT_RECONSTRUCTION_HIERARCHY
 
 class SinglePhaseUniformMassfInterface():
-    def __init__(self, interface_id, nL, nR, recon_scheme, limiter, recon_props, update_from, flux_scheme) -> None:
+    def __init__(self, interface_id, recon_scheme, limiter, recon_props, update_from, flux_scheme) -> None:
         self.interface_id = interface_id
-        self.nL = nL
-        self.nR = nR
         
         self.flux_scheme = flux_scheme
         self.flux_flag = True

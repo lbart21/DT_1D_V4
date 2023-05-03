@@ -141,7 +141,6 @@ class JointBlock(EmptyMeshObject):
 
         # Update mesh_object_1.interface_array with new_interface
         # Delete interface from mesh_object_2.interface_array
-        # Update nL and nR
         # Update interface IDs
         # Join interface_arrays
 
@@ -149,22 +148,16 @@ class JointBlock(EmptyMeshObject):
 
         del mesh_object_2.interface_array[block_2_interface_id_being_replaced]
 
-        if joining_to_west_edge:   # On west edge of mesh1, so need to increase values of nL in mesh1.interfaceArray by number of cells in mesh2.
-                                # Then need to increase values of nR in mesh2.interfaceArray by number of cells in mesh1.
+        if joining_to_west_edge:   
             for ind, interface in enumerate(mesh_object_1.interface_array):
-                interface.nL += ncells_mesh_2
                 interface.interface_id = ind
             for ind, interface in enumerate(mesh_object_2.interface_array):
-                interface.nR += ncells_mesh_1
                 interface.interface_id = ind + ninterfaces_mesh_1
 
-        if joining_to_east_edge:   # On east edge of mesh1, so need to increase values of nR in mesh1.interfaceArray by number of cells in mesh2.
-                                # Then need to increase values of nL in mesh2.interfaceArray by number of cells in mesh1.
+        if joining_to_east_edge:   
             for ind, interface in enumerate(mesh_object_1.interface_array):
-                interface.nR += ncells_mesh_2
                 interface.interface_id = ind
             for ind, interface in enumerate(mesh_object_2.interface_array):
-                interface.nL += ncells_mesh_1
                 interface.interface_id = ind + ninterfaces_mesh_1
 
         self.interface_array = mesh_object_1.interface_array + mesh_object_2.interface_array

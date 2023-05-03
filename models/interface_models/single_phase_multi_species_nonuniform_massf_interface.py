@@ -10,11 +10,9 @@ from Algorithms.DT_1D_V4.reconstruction.reconstruction_hierarchy \
 from Algorithms.DT_1D_V4.reconstruction.locate_neighbouring_cell_indices import find_idx_of_cell_recursively
 
 class SinglePhaseMultiSpeciesNonUniformMassfInterface():
-    def __init__(self, interface_id, nL, nR, flux_scheme, recon_scheme, \
+    def __init__(self, interface_id, flux_scheme, recon_scheme, \
                         limiter, recon_props, update_from) -> None:
         self.interface_id = interface_id
-        self.nL = nL
-        self.nR = nR
 
         self.flux_scheme = flux_scheme
         self.flux_flag = True

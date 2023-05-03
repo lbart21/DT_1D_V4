@@ -83,8 +83,7 @@ class SinglePhaseMultiSpeciesFiniteRateReactivePipeNew(SingleInlet1DMeshObject):
             fs_rght = flow_state_object(gs_rght)
 
             interface_object = SinglePhaseMultiSpeciesNonUniformMassfInterface(\
-                                    interface_id = interface, nL = interface, \
-                                    nR = n_cells - interface, \
+                                    interface_id = interface, \
                                     flux_scheme = flux_scheme, \
                                     recon_scheme = recon_scheme, \
                                     limiter = limiter, \

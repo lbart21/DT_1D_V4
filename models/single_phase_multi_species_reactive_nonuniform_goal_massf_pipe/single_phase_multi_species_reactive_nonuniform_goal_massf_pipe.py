@@ -3,7 +3,7 @@ Function:
 Author: Luke Bartholomew
 Edits:
 """
-
+import numpy as np
 from Algorithms.DT_1D_V4.models.prefilled_single_inlet_mesh_object import SingleInlet1DMeshObject
 
 from Algorithms.DT_1D_V4.models.interface_models.\
@@ -56,8 +56,7 @@ class SinglePhaseMultiSpeciesReactiveNonuniformGoalMassfPipe(SingleInlet1DMeshOb
             fs_rght = flow_state_object(gs_rght)
 
             interface_object = SinglePhaseMultiSpeciesNonUniformMassfInterface(\
-                                    interface_id = interface, nL = interface, \
-                                    nR = n_cells - interface, \
+                                    interface_id = interface, \
                                     flux_scheme = flux_scheme, \
                                     recon_scheme = recon_scheme, \
                                     limiter = limiter, \
